@@ -15,6 +15,23 @@ export function useAuthState(): AuthState {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Check mock authentication first
+    if (localStorage.getItem('mock_joyer_auth') === 'true') {
+      const mockUser = { id: 'mock-id', email: 'admin@agencia.com' } as User;
+      const mockJoyer = {
+        id: 'mock-id',
+        email: 'admin@agencia.com',
+        full_name: 'Admin Local',
+        role: 'admin',
+        is_active: true,
+        created_at: new Date().toISOString()
+      } as Joyer;
+      setUser(mockUser);
+      setJoyer(mockJoyer);
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       const currentUser = session?.user ?? null
       setUser(currentUser)

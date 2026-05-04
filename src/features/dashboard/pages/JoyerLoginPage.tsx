@@ -21,6 +21,14 @@ export default function JoyerLoginPage() {
 
     setLoading(true)
     try {
+      // Acceso de prueba local (mock)
+      if (email.trim() === 'admin@agencia.com' && password === 'admin') {
+        await new Promise(resolve => setTimeout(resolve, 500)) // Simular carga
+        localStorage.setItem('mock_joyer_auth', 'true')
+        navigate('/joyer')
+        return
+      }
+
       const { error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,

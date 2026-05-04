@@ -33,10 +33,110 @@ export default function ProspectDetailPage() {
   const [notes, setNotes] = useState('')
   const [selectedInterviewer, setSelectedInterviewer] = useState('')
 
+  // Mock prospects for local dev
+  const MOCK_PROSPECTS_MAP: Record<string, Prospect> = {
+    'mock-prospect-1': {
+      id: 'mock-prospect-1',
+      full_name: 'Laura Gómez',
+      email: 'laura.gomez@example.com',
+      phone: '+541123456789',
+      portfolio_url: 'https://behance.net/lauragomez',
+      linkedin_url: 'https://linkedin.com/in/lauragomez',
+      profile_type: 'video_editor',
+      country: 'Argentina',
+      expected_rate: 20,
+      status: 'unassigned',
+      is_in_project: false,
+      interviewer_id: null,
+      years_experience: 4,
+      cv_url: null,
+      photo_url: null,
+      created_at: '2026-04-20T10:00:00Z',
+    } as Prospect,
+    'mock-prospect-2': {
+      id: 'mock-prospect-2',
+      full_name: 'Martín Rodríguez',
+      email: 'martin.rod@example.com',
+      phone: '+541198765432',
+      portfolio_url: 'https://dribbble.com/martinrod',
+      linkedin_url: 'https://linkedin.com/in/martinrod',
+      profile_type: 'graphic_designer',
+      country: 'Argentina',
+      expected_rate: 25,
+      status: 'assigned',
+      is_in_project: false,
+      interviewer_id: 'mock-id',
+      years_experience: 6,
+      cv_url: null,
+      photo_url: null,
+      created_at: '2026-04-19T14:30:00Z',
+    } as Prospect,
+    'mock-prospect-3': {
+      id: 'mock-prospect-3',
+      full_name: 'Camila Fernández',
+      email: 'camila.f@example.com',
+      phone: '+541155443322',
+      portfolio_url: 'https://behance.net/camilaf',
+      linkedin_url: 'https://linkedin.com/in/camilaf',
+      profile_type: 'content_creator',
+      country: 'Uruguay',
+      expected_rate: 18,
+      status: 'selected',
+      is_in_project: true,
+      interviewer_id: 'mock-id',
+      years_experience: 3,
+      cv_url: null,
+      photo_url: null,
+      created_at: '2026-04-15T09:00:00Z',
+    } as Prospect,
+    'mock-prospect-4': {
+      id: 'mock-prospect-4',
+      full_name: 'Santiago López',
+      email: 'santi.lopez@example.com',
+      phone: '+541144556677',
+      portfolio_url: 'https://vimeo.com/santilopez',
+      linkedin_url: 'https://linkedin.com/in/santilopez',
+      profile_type: 'video_editor',
+      country: 'Chile',
+      expected_rate: 30,
+      status: 'selected',
+      is_in_project: false,
+      interviewer_id: 'mock-id',
+      years_experience: 8,
+      cv_url: null,
+      photo_url: null,
+      created_at: '2026-04-12T16:45:00Z',
+    } as Prospect,
+    'mock-prospect-5': {
+      id: 'mock-prospect-5',
+      full_name: 'Valentina Torres',
+      email: 'val.torres@example.com',
+      phone: '+541177889900',
+      portfolio_url: 'https://behance.net/valtorres',
+      linkedin_url: 'https://linkedin.com/in/valtorres',
+      profile_type: 'graphic_designer',
+      country: 'Colombia',
+      expected_rate: 22,
+      status: 'unassigned',
+      is_in_project: false,
+      interviewer_id: null,
+      years_experience: 5,
+      cv_url: null,
+      photo_url: null,
+      created_at: '2026-04-22T11:15:00Z',
+    } as Prospect,
+  }
+
   // Fetch prospect
   const { data: prospect, isLoading } = useQuery({
     queryKey: ['prospect', id],
     queryFn: async (): Promise<Prospect> => {
+      if (localStorage.getItem('mock_joyer_auth') === 'true') {
+        const mockProspect = MOCK_PROSPECTS_MAP[id!]
+        if (mockProspect) return mockProspect
+        throw new Error('Prospecto no encontrado')
+      }
+
       const { data, error } = await supabase
         .from('prospects')
         .select('*')
@@ -52,6 +152,10 @@ export default function ProspectDetailPage() {
   const { data: interview } = useQuery({
     queryKey: ['interview', id],
     queryFn: async (): Promise<(Interview & { interviewer?: Joyer }) | null> => {
+      if (localStorage.getItem('mock_joyer_auth') === 'true') {
+        return null // No interviews in mock mode
+      }
+
       const { data, error } = await supabase
         .from('interviews')
         .select(`

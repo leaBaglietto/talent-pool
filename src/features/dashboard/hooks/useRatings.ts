@@ -6,6 +6,10 @@ export function useRatings(prospectId: string) {
   return useQuery({
     queryKey: ['ratings', prospectId],
     queryFn: async (): Promise<(Rating & { joyer_name: string })[]> => {
+      if (localStorage.getItem('mock_joyer_auth') === 'true') {
+        return [] // No ratings in mock mode
+      }
+
       const { data, error } = await supabase
         .from('ratings')
         .select(`

@@ -26,6 +26,7 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   async function handleLogout() {
+    localStorage.removeItem('mock_joyer_auth')
     await supabase.auth.signOut()
     navigate('/joyer/login')
   }
